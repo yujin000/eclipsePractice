@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import DAO.MessagesDAO;
 import dto.MessagesDTO;
-import DAO.Dao;
 
 @WebServlet("*.message")
 public class MessagesController extends HttpServlet {
@@ -23,18 +23,18 @@ public class MessagesController extends HttpServlet {
 			if (uri.equals("/input.message")) {
 				String writer = request.getParameter("writer");
 				String msg = request.getParameter("msg");
-				Dao dao = Dao.getInstance();
+				MessagesDAO dao = MessagesDAO.getinstance();
 				int result = dao.insert(writer, msg);
 				response.sendRedirect("index.html");
 			} else if (uri.equals("/output.message")) {
-				Dao dao = Dao.getInstance();
+				MessagesDAO dao = MessagesDAO.getinstance();
 				List<MessagesDTO> list = dao.selectAll();
 				request.setAttribute("list", list);
 				request.getRequestDispatcher("outputView.jsp").forward(request, response);
 				
 			} else if (uri.equals("/delete.message")) {
 				int seq = Integer.parseInt(request.getParameter("delSeq"));
-				Dao dao = new Dao();
+				MessagesDAO dao = new MessagesDAO();
 				int result = dao.delete(seq);
 				response.sendRedirect("output.message");
 			} else if (uri.equals("/update.message")) {
@@ -42,8 +42,8 @@ public class MessagesController extends HttpServlet {
 				String msg = request.getParameter("msg");
 				int seq = Integer.parseInt(request.getParameter("seq"));
 
-				Dao dao = Dao.getInstance();
-				int result = dao.update(writer, msg, seq);
+				MessagesDAO dao = MessagesDAO.getinstance();
+				int result = dao.update(seq, writer, msg);
 				response.sendRedirect("output.message");
 			}
 		} catch (Exception e) {
